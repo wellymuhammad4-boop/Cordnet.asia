@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CINEMA PROPERTY — FILM PROP CONSOLE (FICTIONAL)</title>
+  <style>
+    :root{
+      --bg:#050607;
+      --panel:rgba(10,12,14,.78);
+      --stroke:rgba(255,255,255,.12);
+      --stroke2:rgba(255,255,255,.18);
+      --text:rgba(231,238,247,.92);
+      --muted:rgba(231,238,247,.62);
+      --green:#20e070;
+      --green2:#0fb85a;
+      --red:#ff4f4f;
+      --shadow:0 24px 80px rgba(0,0,0,.65);
+      --amber:#ffd36e;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 520px at 50% 18%, rgba(32,224,112,.10), transparent 60%),
+        radial-gradient(700px 520px at 50% 50%, rgba(255,255,255,.05), transparent 62%),
+        var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      overflow:hidden;
+      padding:24px 14px;
+    }
+
+    /* grain */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.18;
+      mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+    }
+
+    /* BIG watermark - explicit fictional */
+    .wm{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      pointer-events:none;
+      font-weight:950;
+      letter-spacing:.42em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.055);
+      transform:rotate(-12deg);
+      font-size:min(6vw, 56px);
+      user-select:none;
+      text-align:center;
+      padding:0 10px;
+    }
+
+    /* Top left badge - cinema property */
+    .badge{
+      position:fixed;
+      left:18px;
+      top:16px;
+      z-index:50;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.28);
+      box-shadow:0 18px 44px rgba(0,0,0,.45);
+      backdrop-filter: blur(3px);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:850;
+      font-size:11px;
+      color:rgba(255,255,255,.78);
+    }
+    .badge .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:rgba(255,211,110,.9);
+      box-shadow:0 0 18px rgba(255,211,110,.25);
+      flex:0 0 auto;
+    }
+    .badge b{color:rgba(255,211,110,.95)}
+
+    .frame{
+      width:min(880px, 96vw);
+      margin:0 auto;
+      border-radius:18px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .topbar{
+      padding:14px 16px 12px;
+      border-bottom:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
+    .stamp{
+      position:absolute;
+      left:16px;
+      font-size:12px;
+      color:rgba(255,255,255,.5);
+      letter-spacing:.02em;
+      font-family:"Courier New", monospace;
+    }
+    .brand{
+      font-weight:850;
+      font-size:13px;
+      color:rgba(255,255,255,.78);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .content{
+      padding:18px 18px 22px;
+      background:rgba(0,0,0,.20);
+      position:relative;
+      min-height:520px;
+    }
+    .lefttag{
+      position:absolute;
+      left:18px; top:18px;
+      font-size:12.5px;
+      color:rgba(32,224,112,.86);
+      font-weight:900;
+      letter-spacing:.06em;
+      text-shadow:0 0 14px rgba(32,224,112,.18);
+      font-family:"Courier New", monospace;
+    }
+    .title{
+      text-align:center;
+      margin:0 0 10px;
+      font-size:14px;
+      font-weight:900;
+      color:rgba(255,255,255,.80);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    /* ===== Screen switching ===== */
+    .screen{display:none}
+    .screen.active{display:block}
+
+    /* ===== LOGIN UI (no onscreen keypad) ===== */
+    .loginWrap{
+      width:min(520px,100%);
+      margin:56px auto 0;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.24);
+      border-radius:16px;
+      padding:16px 16px 14px;
+    }
+    .loginHead{
+      text-align:center;
+      font-weight:950;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin:0 0 10px;
+      color:rgba(32,224,112,.92);
+      text-shadow:0 0 18px rgba(32,224,112,.14);
+    }
+    .subNote{
+      text-align:center;
+      margin:0 0 10px;
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.46);
+    }
+
+    .label{
+      text-align:center;
+      margin:14px 0 8px;
+      font-size:13px;
+      color:rgba(255,255,255,.80);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .inputwrap{
+      display:flex;
+      justify-content:center;
+      margin-bottom:10px;
+      position:relative;
+    }
+
+    /* input styled like display */
+    .inputDisplay{
+      width:min(360px, 100%);
+      height:46px;
+      border:1px solid var(--stroke2);
+      border-radius:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      display:flex;
+      align-items:center;
+      padding:0 12px;
+      overflow:hidden;
+      box-shadow:0 10px 22px rgba(0,0,0,.28);
+    }
+    .inputDisplay input{
+      width:100%;
+      height:100%;
+      border:0;
+      outline:none;
+      background:transparent;
+      color:rgba(255,255,255,.92);
+      font-size:18px;
+      letter-spacing:.22em;
+      font-family:"Courier New", monospace;
+      padding:0;
+    }
+    .inputDisplay input::placeholder{
+      color:rgba(255,255,255,.22);
+      letter-spacing:.12em;
+    }
+    .caret{
+      width:8px;height:18px;border-radius:2px;
+      background:rgba(255,255,255,.55);
+      margin-left:8px;
+      animation: blink 1s steps(2,end) infinite;
+      flex:0 0 auto;
+    }
+    @keyframes blink{50%{opacity:.12}}
+
+    .hint{
+      text-align:center;
+      margin-top:6px;
+      font-size:12px;
+      color:rgba(255,255,255,.46);
+      letter-spacing:.02em;
+      min-height:16px;
+    }
+
+    .actions{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      height:44px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      color:rgba(255,255,255,.9);
+      font-weight:950;
+      letter-spacing:.10em;
+      cursor:pointer;
+      user-select:none;
+      text-transform:uppercase;
+    }
+    .btn:active{transform:scale(.99)}
+    .btn.go{
+      background:linear-gradient(180deg, rgba(32,224,112,.95), rgba(15,184,90,.85));
+      color:#001b0d;
+      border-color:rgba(32,224,112,.55);
+    }
+
+    /* ===== Terminal (kept) ===== */
+    .protocol{
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      margin-top:6px;
+      margin-bottom:14px;
+      font-size:13px;
+      color:var(--green);
+      letter-spacing:.03em;
+      text-shadow:0 0 14px rgba(32,224,112,.14);
+    }
+    .protocol b{font-weight:900}
+
+    .pad{
+      width:min(270px, 100%);
+      margin:16px auto 0;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:12px;
+    }
+    .key{
+      height:54px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color:rgba(255,255,255,.92);
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.04em;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+      transition:transform .06s ease, border-color .12s ease;
+    }
+    .key:active{ transform:scale(.985); border-color:rgba(32,224,112,.40); }
+    .key.muted{opacity:.75}
+
+    .panel{
+      width:min(520px, 100%);
+      margin:10px auto 0;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.24);
+      padding:14px 14px 12px;
+    }
+    .statusline{
+      display:flex;
+      justify-content:space-between;
+      font-size:12px;
+      color:rgba(255,255,255,.72);
+      letter-spacing:.08em;
+      margin-bottom:10px;
+      text-transform:uppercase;
+    }
+    .bar{
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, transparent, rgba(32,224,112,.95), transparent);
+      box-shadow:0 0 22px rgba(32,224,112,.40);
+    }
+    .log{
+      margin-top:10px;
+      font-size:12px;
+      color:rgba(255,255,255,.72);
+      line-height:1.45;
+      white-space:pre-line;
+      min-height:120px;
+      font-family:"Courier New", monospace;
+    }
+    .ok{color:rgba(154,255,201,.95)}
+    .bad{color:var(--red)}
+    .resultBox{
+      width:min(640px, 100%);
+      margin:10px auto 0;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.24);
+      padding:16px 16px 14px;
+    }
+    .headline{
+      font-size:18px;
+      font-weight:950;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      margin:0 0 10px;
+    }
+    .headline.success{color:var(--green); text-shadow:0 0 18px rgba(32,224,112,.20)}
+    .headline.denied{color:var(--red); text-shadow:0 0 18px rgba(255,79,79,.18)}
+    .block{
+      font-family:"Courier New", monospace;
+      font-size:13px;
+      line-height:1.55;
+      white-space:pre-line;
+      color:rgba(231,238,247,.86);
+    }
+    .miniTop{
+      text-align:center;
+      font-family:"Courier New", monospace;
+      font-size:13px;
+      color:rgba(255,255,255,.70);
+      letter-spacing:.06em;
+      margin-bottom:10px;
+    }
+    .glow{
+      color:rgba(32,224,112,.92);
+      text-shadow:0 0 18px rgba(32,224,112,.16);
+      font-weight:950;
+    }
+    .footerline{
+      text-align:center;
+      margin-top:16px;
+      font-size:11px;
+      color:rgba(255,255,255,.18);
+      letter-spacing:.22em;
+      text-transform:uppercase;
+    }
+    .hidden{display:none}
+
+    @media (max-width:640px){
+      .badge{left:12px; top:10px; font-size:10px}
+      .content{min-height:560px}
+    }
+  </style>
+</head>
+<body>
+ 
+
+    <div class="topbar">
+      <div class="stamp" id="stamp">—</div>
+      <div class="brand" id="brandText">VPS GLOBAL SERVER</div>
+    </div>
+
+    <div class="content">
+      <div class="lefttag" id="sessionTag">session_id: asia_session</div>
+
+      <!-- ===== SCREEN: LOGIN (NO ONSCREEN KEYPAD) ===== -->
+      <section class="screen active" id="screenLogin">
+        <div class="title">Operator Access </div>
+        <div class="loginWrap">
+          <div class="loginHead">GLOBAL SERVER AUTH GATE</div>
+          <p class="subNote"></p>
+
+          <form id="loginForm" autocomplete="off">
+            <div class="label">Enter Operator Token:</div>
+
+            <div class="inputwrap">
+              <div class="inputDisplay" aria-label="Operator token input">
+                <input
+                  id="loginInput"
+                  type="password"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="••••••"
+                  aria-label="Operator token"
+                />
+                <span class="caret" aria-hidden="true"></span>
+              </div>
+            </div>
+
+            <div class="hint" id="loginHint">Type token • Press Enter to authenticate</div>
+
+            <div class="actions">
+              <button class="btn go" type="submit" id="loginEnter">AUTHENTICATE</button>
+              <button class="btn" type="button" id="loginReset">RESET</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== SCREEN: TERMINAL (kept) ===== -->
+      <section class="screen" id="screenTerminal">
+        <div class="title">ACCOUNT Offline Authorization</div>
+        <div class="protocol">
+          <span>Protocol:</span><b>201.3</b><span>-</span><span>Prop Auth</span>
+        </div>
+
+        <!-- INPUT STEP -->
+        <div id="stepInput">
+          <div class="label" id="label">Enter 16-Digit Account Number:</div>
+          <div class="inputwrap">
+            <div class="inputDisplay" style="width:min(360px,100%);" aria-live="polite">
+              <div style="width:100%; font-family:'Courier New', monospace; font-size:18px; letter-spacing:.22em; color:rgba(255,255,255,.92);" id="displayText"></div>
+              <span class="caret" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="hint" id="hint">16 digits • auto spacing • Enter to continue</div>
+
+          <div class="pad" aria-label="Keypad">
+            <div class="key" data-digit="7">7</div>
+            <div class="key" data-digit="8">8</div>
+            <div class="key" data-digit="9">9</div>
+            <div class="key" data-digit="4">4</div>
+            <div class="key" data-digit="5">5</div>
+            <div class="key" data-digit="6">6</div>
+            <div class="key" data-digit="1">1</div>
+            <div class="key" data-digit="2">2</div>
+            <div class="key" data-digit="3">3</div>
+            <div class="key muted" id="clearKey">✕</div>
+            <div class="key" data-digit="0">0</div>
+            <div class="key muted" id="backspaceKey">⌫</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="enterBtn" type="button">↵ ENTER</button>
+            <button class="btn" id="resetBtn" type="button">RESET</button>
+            <button class="btn" id="logoutBtn" type="button">LOGOUT</button>
+          </div>
+        </div>
+
+        <!-- VALIDATING STEP -->
+        <div id="stepValidate" class="hidden">
+          <div class="panel">
+            <div class="statusline">
+              <span id="vTitle">VALIDATING</span>
+              <span id="netState" class="ok">LOCAL</span>
+            </div>
+            <div class="bar"><div class="fill" id="fill"></div></div>
+            <div class="log" id="vLog"></div>
+          </div>
+        </div>
+
+        <!-- RESULT STEP -->
+        <div id="stepResult" class="hidden">
+          <div class="resultBox">
+            <div class="headline success hidden" id="okHead">VERIFICATION SUCCESSFUL</div>
+            <div class="headline denied hidden" id="badHead">CARD DATA NOT FOUND</div>
+            <div class="block" id="resultText"></div>
+            <div class="actions" style="margin-top:14px;">
+              <button class="btn go hidden" id="continueBtn" type="button">CONTINUE TO AMOUNT</button>
+              <button class="btn" id="againBtn" type="button">NEW SESSION</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AMOUNT STEP -->
+        <div id="stepAmount" class="hidden">
+          <div class="resultBox">
+            <div class="miniTop">
+              Token: <span id="tokenMask">••••</span> &nbsp; <span id="expMini">--/--</span>
+            </div>
+            <div class="headline success" style="font-size:16px;">
+              AVAILABLE QUOTA: <span class="glow" id="availQuota">3,000,000</span>
+            </div>
+            <div class="label" id="amountLabel">Enter Amount (UNITS):</div>
+            <div class="inputwrap">
+              <div class="inputDisplay" style="width:min(360px,100%);" aria-live="polite">
+                <div style="width:100%; font-family:'Courier New', monospace; font-size:18px; letter-spacing:.16em; color:rgba(255,255,255,.92);" id="amountDisplay"></div>
+                <span class="caret" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="hint" id="amountHint">digits only • Enter to continue • Backspace to edit</div>
+            <div class="actions">
+              <button class="btn go" id="amountEnterBtn" type="button">↵ ENTER AMOUNT</button>
+              <button class="btn" id="amountBackBtn" type="button">BACK</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- APPROVAL STEP -->
+        <div id="stepApproval" class="hidden">
+          <div class="resultBox">
+            <div class="miniTop">
+              Token: <span id="tokenMask2">••••</span> &nbsp; <span id="expMini2">--/--</span>
+            </div>
+            <div class="headline denied" style="font-size:16px; color:rgba(255,220,120,.95); text-shadow:0 0 18px rgba(255,220,120,.12);">
+              REQUEST AUTHORIZATION TOKEN 
+            </div>
+            <div class="label">Enter 6-Digit APPROVAL CODE:</div>
+            <div class="inputwrap">
+              <div class="inputDisplay" style="width:min(360px,100%);" aria-live="polite">
+                <div style="width:100%; font-family:'Courier New', monospace; font-size:18px; letter-spacing:.16em; color:rgba(255,255,255,.92);" id="approvalDisplay"></div>
+                <span class="caret" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="hint" id="approvalHint">6 digits • masked • Enter to submit</div>
+            <div class="actions">
+              <button class="btn go" id="approvalEnterBtn" type="button">SUBMIT</button>
+              <button class="btn" id="approvalCancelBtn" type="button">CANCEL</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECEIPT STEP -->
+        <div id="stepReceipt" class="hidden">
+          <div class="resultBox">
+            <div class="headline denied" id="receiptHead">TRANSACTION DENIED </div>
+            <div class="block" id="receiptText"></div>
+            <div class="actions" style="margin-top:14px;">
+              <button class="btn" id="exitBtn" type="button">END</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="footerline"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    /* ====== Shared DB loader ====== */
+   let DB = {
+  operators: [
+    { operator: "OFFLINE 201.3", token: "150531" },
+    { operator: "admin", token: "999900" }
+  ],
+  cards: [
+    {
+      full_card: "4060000120240493",
+      expiry: "10/28",
+      holder_name: "DAVID KEENLEY",
+      alias: "DAVID KEENLEY",
+      bank: "REVOLUT LTD",
+      card_type: "VISA DEBIT",
+      amount: "50000000$",
+      iso: {
+        country: "UNITED KINGDOM",
+        a2: "GB",
+        a3: "GBR",
+        num: "826"
+      }
+    }
+  ]
+};
+    /* ====== Timestamp ====== */
+    function updateStamp(){
+      const d = new Date();
+      const mo = d.toLocaleString("en-US",{month:"short"});
+      const day = String(d.getDate()).padStart(2,"0");
+      const hh = String(d.getHours()).padStart(2,"0");
+      const mm = String(d.getMinutes()).padStart(2,"0");
+      document.getElementById("stamp").textContent = `${mo} ${day} ${hh}:${mm}`;
+    }
+    updateStamp();
+    setInterval(updateStamp, 20000);
+
+    /* ====== Screen helper ====== */
+    function showScreen(id){
+      document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    /* =========================================================
+       LOGIN (NO onscreen keypad)
+       token from fake_db.json -> operators[].token
+    ========================================================= */
+    const loginForm  = document.getElementById("loginForm");
+    const loginInput = document.getElementById("loginInput");
+    const loginHint  = document.getElementById("loginHint");
+    const loginReset = document.getElementById("loginReset");
+
+    function flashLogin(msg, bad=true){
+      loginHint.textContent = msg;
+      loginHint.style.color = bad ? "rgba(255,79,79,.85)" : "rgba(154,255,201,.95)";
+      setTimeout(()=>{ loginHint.style.color=""; }, 850);
+    }
+
+    function digitsOnly(s){ return String(s||"").replace(/[^\d]/g,""); }
+
+    async function doLogin(tokenStr){
+      try{
+        if(!DB) await loadDB();
+      }catch(e){
+        flashLogin("DB NOT FOUND (fake_db.json)", true);
+        return;
+      }
+
+      const ops = Array.isArray(DB?.operators) ? DB.operators : [];
+      const cleaned = digitsOnly(tokenStr).trim();
+      const match = ops.find(o => digitsOnly(o?.token ?? "") === cleaned);
+
+      if(!cleaned || cleaned.length < 2){
+        flashLogin("TOKEN TOO SHORT", true);
+        return;
+      }
+      if(!match){
+        flashLogin("ACCESS DENIED", true);
+        return;
+      }
+
+      const who = (match.operator || "ops");
+      document.getElementById("sessionTag").textContent = "session_id: " + who + "_prop_session";
+      flashLogin("ACCESS GRANTED", false);
+
+      setTimeout(()=> showScreen("screenTerminal"), 240);
+    }
+
+    loginForm.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      doLogin(loginInput.value);
+    });
+
+    loginReset.addEventListener("click", ()=>{
+      loginInput.value = "";
+      flashLogin("RESET", false);
+      loginInput.focus();
+    });
+
+    // enforce numeric feel
+    loginInput.addEventListener("input", ()=>{
+      const before = loginInput.value;
+      const after = digitsOnly(before);
+      if(before !== after) loginInput.value = after;
+    });
+
+    // autofocus
+    setTimeout(()=> loginInput.focus(), 150);
+
+    /* =========================================================
+       TERMINAL FLOW (kept from your logic)
+    ========================================================= */
+    const MODE = { TOKEN: "token", EXPIRY: "expiry" };
+    let mode = MODE.TOKEN;
+    let raw = "";
+
+    let inputToken = "";
+    let inputExpiry = "";
+    let inputAmount = "";
+    let inputAuth = "";
+
+    const labelEl = document.getElementById("label");
+    const displayEl = document.getElementById("displayText");
+    const hintEl = document.getElementById("hint");
+
+    const stepInput = document.getElementById("stepInput");
+    const stepValidate = document.getElementById("stepValidate");
+    const stepResult = document.getElementById("stepResult");
+    const stepAmount = document.getElementById("stepAmount");
+    const stepApproval = document.getElementById("stepApproval");
+    const stepReceipt = document.getElementById("stepReceipt");
+
+    const clearKey = document.getElementById("clearKey");
+    const backspaceKey = document.getElementById("backspaceKey");
+    const enterBtn = document.getElementById("enterBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const againBtn = document.getElementById("againBtn");
+    const continueBtn = document.getElementById("continueBtn");
+
+    const fillEl = document.getElementById("fill");
+    const vTitle = document.getElementById("vTitle");
+    const vLog = document.getElementById("vLog");
+    const netState = document.getElementById("netState");
+
+    const okHead = document.getElementById("okHead");
+    const badHead = document.getElementById("badHead");
+    const resultText = document.getElementById("resultText");
+
+    const tokenMask = document.getElementById("tokenMask");
+    const expMini = document.getElementById("expMini");
+    const amountDisplay = document.getElementById("amountDisplay");
+    const amountHint = document.getElementById("amountHint");
+    const availQuota = document.getElementById("availQuota");
+    const amountEnterBtn = document.getElementById("amountEnterBtn");
+    const amountBackBtn = document.getElementById("amountBackBtn");
+
+    const tokenMask2 = document.getElementById("tokenMask2");
+    const expMini2 = document.getElementById("expMini2");
+    const approvalDisplay = document.getElementById("approvalDisplay");
+    const approvalHint = document.getElementById("approvalHint");
+    const approvalEnterBtn = document.getElementById("approvalEnterBtn");
+    const approvalCancelBtn = document.getElementById("approvalCancelBtn");
+
+    const receiptText = document.getElementById("receiptText");
+    const exitBtn = document.getElementById("exitBtn");
+
+    let matchedRecord = null;
+
+    function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+    function delay(ms){ return new Promise(r=>setTimeout(r, ms)); }
+    function formatCard16(d){ return d.replace(/(.{4})/g, "$1 ").trim(); }
+    function formatExpiry(mmYY){ if(mmYY.length <= 2) return mmYY; return mmYY.slice(0,2) + "/" + mmYY.slice(2); }
+    function comma(n){ const s = String(n || ""); if(!s) return ""; return s.replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function normalize(s){ return String(s ?? "").trim(); }
+
+    function flash(msg, isBad=true){
+      const el = (currentStage() === "amount") ? amountHint : (currentStage() === "approval") ? approvalHint : hintEl;
+      el.textContent = msg;
+      el.style.color = isBad ? "rgba(255,79,79,.85)" : "rgba(154,255,201,.95)";
+      setTimeout(()=>{ el.style.color=""; }, 650);
+    }
+
+    function currentStage(){
+      if(!stepAmount.classList.contains("hidden")) return "amount";
+      if(!stepApproval.classList.contains("hidden")) return "approval";
+      return "input";
+    }
+
+    function setMode(next){
+      mode = next;
+      raw = "";
+      if(mode === MODE.TOKEN){
+        labelEl.textContent = "Enter 16-Digit Account Number:";
+        hintEl.textContent = "16 digits • auto spacing • Enter to continue";
+      }else{
+        labelEl.textContent = "Expiry (MM/YY):";
+        hintEl.textContent = "6 digits • auto slash • month 01–12 • Enter to verify";
+      }
+      render();
+    }
+
+    function render(){
+      displayEl.textContent = (mode === MODE.TOKEN) ? formatCard16(raw) : formatExpiry(raw);
+    }
+
+    function clearAll(){ raw = ""; render(); }
+    function backspace(){ if(!raw.length) return; raw = raw.slice(0,-1); render(); }
+
+    function addDigit(d){
+      if(!/^\d$/.test(d)) return;
+
+      if(currentStage() === "amount"){
+        if(inputAmount.length >= 9) return;
+        inputAmount += d;
+        amountDisplay.textContent = comma(inputAmount);
+        return;
+      }
+
+      if(currentStage() === "approval"){
+        if(inputAuth.length >= 6) return;
+        inputAuth += d;
+        approvalDisplay.textContent = "●".repeat(inputAuth.length);
+        return;
+      }
+
+      if(mode === MODE.TOKEN){
+        if(raw.length >= 16) return;
+        raw += d;
+        render();
+        return;
+      }
+
+      if(mode === MODE.EXPIRY){
+        if(raw.length >= 4) return;
+        if(raw.length === 1){
+          const m = parseInt(raw + d, 10);
+          if(m < 1 || m > 12) return;
+        }
+        raw += d;
+        render();
+        return;
+      }
+    }
+
+    function enterInputStage(){
+      if(mode === MODE.TOKEN){
+        if(raw.length !== 16) return flash("Need 16 digits");
+        inputToken = raw;
+        setMode(MODE.EXPIRY);
+        return;
+      }
+      if(mode === MODE.EXPIRY){
+        if(raw.length !== 4) return flash("Need 4 digits (MMYY)");
+        inputExpiry = formatExpiry(raw);
+        startValidatingVerification();
+        return;
+      }
+    }
+
+    function setProgress(p){ fillEl.style.width = clamp(p,0,100)+"%"; }
+    function logLine(line){ vLog.textContent += line + "\n"; vLog.scrollTop = vLog.scrollHeight; }
+
+    async function startValidatingVerification(){
+      stepInput.classList.add("hidden");
+      stepValidate.classList.remove("hidden");
+      vLog.textContent = "";
+      setProgress(0);
+
+      vTitle.textContent = "VALIDATING";
+      netState.textContent = "CONECTED";
+      netState.className = "ok";
+
+      logLine("Initializing offline auth layer (prop)...");
+      await delay(420);
+      setProgress(14);
+      logLine("Routing hop: NODE-7A → NODE-3F → NODE-11C");
+      await delay(420);
+      setProgress(28);
+      logLine("Sealing packet header (fictional cipher)...");
+      await delay(420);
+      setProgress(42);
+      logLine("Integrity check: OK");
+      await delay(360);
+      setProgress(55);
+      logLine("Signal jitter detected...");
+      netState.textContent = "OFFLINE";
+      netState.className = "bad";
+      await delay(520);
+      netState.textContent = "LOCAL";
+      netState.className = "ok";
+      logLine("Recovered channel. Continuing...");
+      await delay(420);
+      setProgress(72);
+      logLine("Verifying against local database...");
+      await delay(520);
+      setProgress(90);
+
+      try{
+        if(!DB) await loadDB();
+        setProgress(100);
+        await delay(260);
+        showResultFromDB(DB);
+      }catch(err){
+        setProgress(100);
+        await delay(260);
+        showDenied("ERROR: Local DB not reachable.\nDetails: " + String(err));
+      }
+    }
+
+    function showResultFromDB(db){
+      const list = Array.isArray(db?.cards) ? db.cards : [];
+      const token = inputToken;
+      const expiry = inputExpiry;
+
+      const match = list.find(c => normalize(c.full_card) === normalize(token) && normalize(c.expiry) === normalize(expiry) );
+      if(!match){
+        showDenied(
+          "Debit Card Data Not Found.\n\n" +
+          "Input:\n" +
+          `- token: ${token}\n` +
+          `- expiry: ${expiry}\n\n` +
+          "Protocol101.3"
+        );
+        return;
+      }
+      matchedRecord = match;
+      showApproved(match);
+    }
+
+    function showApproved(rec){
+      stepValidate.classList.add("hidden");
+      stepResult.classList.remove("hidden");
+
+      okHead.classList.remove("hidden");
+      badHead.classList.add("hidden");
+
+      continueBtn.classList.remove("hidden");
+      againBtn.textContent = "NEW SESSION";
+
+      const iso = rec.iso || {};
+      resultText.textContent =
+`Database Record Retrieved (FILM PROP):
+Receiver/Token: ${normalize(rec.full_card)}
+Receiver/Holder: ${normalize(rec.holder_name)}
+Receiver/Alias: ${normalize(rec.alias)}
+Receiver/Expiry: ${normalize(rec.expiry)}
+Receiver/Node: ${normalize(rec.bank)}
+Receiver/Profile: ${normalize(rec.card_type)}
+Receiver/ISO Country: ${normalize(iso.country)}
+Receiver/ISO A2: ${normalize(iso.a2)}
+Receiver/ISO A3: ${normalize(iso.a3)}
+Receiver/ISO Num: ${normalize(iso.num)}
+Receiver/Quota: ${normalize(rec.amount)}
+`;
+    }
+
+    function showDenied(message){
+      stepValidate.classList.add("hidden");
+      stepResult.classList.remove("hidden");
+
+      okHead.classList.add("hidden");
+      badHead.classList.remove("hidden");
+
+      continueBtn.classList.add("hidden");
+      againBtn.textContent = "NEW SESSION";
+
+      resultText.textContent = message;
+    }
+
+    function goAmount(){
+      if(!matchedRecord) return;
+      stepResult.classList.add("hidden");
+      stepAmount.classList.remove("hidden");
+
+      const last4 = matchedRecord.full_card.slice(-4);
+      tokenMask.textContent = "•••• " + last4;
+      expMini.textContent = matchedRecord.expiry;
+
+      const q = String(matchedRecord.amount || "3000000").replace(/[^\d]/g,"").slice(0,9) || "3000000";
+      availQuota.textContent = comma(q);
+
+      inputAmount = "";
+      amountDisplay.textContent = "";
+      amountHint.textContent = "digits only • Enter to continue • Backspace to edit";
+    }
+
+    function backToVerify(){
+      stepAmount.classList.add("hidden");
+      stepResult.classList.remove("hidden");
+    }
+
+    function amountEnter(){
+      if(!inputAmount || inputAmount === "0") return flash("Enter a valid amount", true);
+
+      stepAmount.classList.add("hidden");
+      stepApproval.classList.remove("hidden");
+
+      const last4 = matchedRecord.full_card.slice(-4);
+      tokenMask2.textContent = "•••• " + last4;
+      expMini2.textContent = matchedRecord.expiry;
+
+      inputAuth = "";
+      approvalDisplay.textContent = "";
+      approvalHint.textContent = "6 digits • masked • Enter to submit";
+    }
+
+    function approvalCancel(){
+      stepApproval.classList.add("hidden");
+      stepAmount.classList.remove("hidden");
+      flash("Authorization canceled", true);
+    }
+
+    async function approvalSubmit(){
+      if(inputAuth.length !== 6) return flash("Need 6 digits", true);
+
+      stepApproval.classList.add("hidden");
+      stepValidate.classList.remove("hidden");
+
+      vLog.textContent = "";
+      setProgress(0);
+
+      vTitle.textContent = "SUBMITTING";
+      netState.textContent = "LOCAL";
+      netState.className = "ok";
+
+      logLine("Building submission packet...");
+      await delay(420);
+      setProgress(18);
+      logLine("Attaching auth token...");
+      await delay(380);
+      setProgress(34);
+      logLine("Final checksum...");
+      await delay(420);
+      setProgress(52);
+      logLine("Unexpected policy lock triggered.");
+      netState.textContent = "OFFLINE";
+      netState.className = "bad";
+      await delay(620);
+      setProgress(70);
+      netState.textContent = "LOCAL";
+      netState.className = "ok";
+      logLine("Retry blocked: escalation denied.");
+      await delay(520);
+      setProgress(88);
+      logLine("Abort flag received. Terminating...");
+      await delay(520);
+      setProgress(100);
+      await delay(250);
+
+      showReceiptFailTotal();
+    }
+
+    function showReceiptFailTotal(){
+      stepValidate.classList.add("hidden");
+      stepReceipt.classList.remove("hidden");
+
+      const now = new Date();
+      const ts = now.toISOString();
+      const tx = "TX" + String(Math.floor(Math.random()*1e6)).padStart(6,"0") + "-" + String(now.getTime()).slice(-6);
+      const last4 = matchedRecord.full_card.slice(-4);
+
+      receiptText.textContent =
+`BALANCE NOT FOUND
+-----------------------------------
+Transaction ID : ${tx}
+Timestamp      : ${ts}
+Token          : •••• ${last4}
+Expiry         : ${matchedRecord.expiry}
+Requested Amt  : ${comma(inputAmount)} $
+Approval Code  : ${inputAuth}
+
+STATUS         : ACTIVE — APPROVAL DOES NOT MATCH THE AMOUNT
+REASON         : AUTHORIZATION MISMATCH / BALANCE UNVERIFIED
+DETAILS        : ROUTE BLOCKED • AUTH MISMATCH • SECURITY TRIGGERED
+-----------------------------------
+END OF LINE.
+OPERATION TERMINATED.
+`;
+    }
+
+    function endFilm(){
+      stepReceipt.classList.add("hidden");
+      stepInput.classList.remove("hidden");
+
+      matchedRecord = null;
+      inputToken = "";
+      inputExpiry = "";
+      inputAmount = "";
+      inputAuth = "";
+
+      setMode(MODE.TOKEN);
+      flash("SESSION CLOSED", false);
+    }
+
+    function newSession(){
+      matchedRecord = null;
+      inputToken = "";
+      inputExpiry = "";
+      inputAmount = "";
+      inputAuth = "";
+      raw = "";
+
+      stepReceipt.classList.add("hidden");
+      stepApproval.classList.add("hidden");
+      stepAmount.classList.add("hidden");
+      stepResult.classList.add("hidden");
+      stepValidate.classList.add("hidden");
+      stepInput.classList.remove("hidden");
+
+      setMode(MODE.TOKEN);
+    }
+
+    function logout(){
+      newSession();
+      showScreen("screenLogin");
+      document.getElementById("loginInput").value = "";
+      flashLogin("LOGGED OUT", false);
+      setTimeout(()=> document.getElementById("loginInput").focus(), 150);
+    }
+
+    function bindKeys(){
+      document.querySelectorAll("[data-digit]").forEach(btn=>{
+        btn.addEventListener("click", ()=> addDigit(btn.dataset.digit));
+      });
+
+      clearKey.addEventListener("click", ()=>{
+        if(currentStage()==="amount"){
+          inputAmount=""; amountDisplay.textContent=""; return;
+        }
+        if(currentStage()==="approval"){
+          inputAuth=""; approvalDisplay.textContent=""; return;
+        }
+        clearAll();
+      });
+
+      backspaceKey.addEventListener("click", ()=>{
+        if(currentStage()==="amount"){
+          inputAmount = inputAmount.slice(0,-1);
+          amountDisplay.textContent = comma(inputAmount);
+          return;
+        }
+        if(currentStage()==="approval"){
+          inputAuth = inputAuth.slice(0,-1);
+          approvalDisplay.textContent = "●".repeat(inputAuth.length);
+          return;
+        }
+        backspace();
+      });
+
+      enterBtn.addEventListener("click", enterInputStage);
+      resetBtn.addEventListener("click", ()=> setMode(mode));
+      logoutBtn.addEventListener("click", logout);
+
+      againBtn.addEventListener("click", newSession);
+      continueBtn.addEventListener("click", goAmount);
+
+      amountEnterBtn.addEventListener("click", amountEnter);
+      amountBackBtn.addEventListener("click", backToVerify);
+
+      approvalEnterBtn.addEventListener("click", approvalSubmit);
+      approvalCancelBtn.addEventListener("click", approvalCancel);
+
+      exitBtn.addEventListener("click", endFilm);
+
+      window.addEventListener("keydown", (e)=>{
+        // Terminal shortcuts only when terminal visible
+        if(!document.getElementById("screenTerminal").classList.contains("active")) return;
+
+        if(e.key >= "0" && e.key <= "9") addDigit(e.key);
+        else if(e.key === "Backspace") backspaceKey.click();
+        else if(e.key === "Escape") clearKey.click();
+        else if(e.key === "Enter"){
+          if(currentStage()==="amount") amountEnter();
+          else if(currentStage()==="approval") approvalSubmit();
+          else enterInputStage();
+        }
+      });
+    }
+
+    // Init
+    bindKeys();
+    setMode(MODE.TOKEN);
+
+    // pre-load DB so login is instant
+    loadDB().catch(()=>{ /* login will show error if missing */ });
+  </script>
+</body>
+</html>
